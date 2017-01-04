@@ -9,66 +9,68 @@ import org.apache.hadoop.io.WritableComparable;
 
 public class DNAMirrorKey implements WritableComparable<DNAMirrorKey> {
 	
-	private Text key;
+	private Text dna;
 	
 	public DNAMirrorKey() {
 		super();
-		key = new Text();
+		this.dna = new Text();
 	}
 	
-	public DNAMirrorKey(Text key) {
+	public DNAMirrorKey(Text dna) {
 		super();
-		this.key = key;
+		this.dna = dna;
 	}
 
-	public Text getKey() {
-		return key;
+	public Text getDna() {
+		return dna;
 	}
 
-	public void setKey(Text key) {
-		this.key = key;
+	public void setDna(Text dna) {
+		this.dna = dna;
 	}
 
 	public void write(DataOutput out) throws IOException {
-		this.key.write(out);
+		dna.write(out);
 	}
 
 	public void readFields(DataInput in) throws IOException {
-		this.key.readFields(in);
+		this.dna.readFields(in);
 	}
 
 	public int compareTo(DNAMirrorKey o) {
 		
-		Text other = o.getKey();
+		String other = o.getDna().toString();
 		
-		int mainResult = this.key.compareTo(other);
+		int mainResult = this.dna.toString().compareTo(other);
 		
 		if(mainResult == 0) {
 			return mainResult;
 		}
-		String keyFirst = new StringBuilder(this.key.toString()).reverse().toString();
+		String keyFirst = new StringBuilder(this.dna.toString()).reverse().toString();
 		
-		int result = keyFirst.compareTo(other.toString());		
+		int result = keyFirst.compareTo(other);		
 		if(result == 0) {
 			return result;
 		}
 		
-		String keySecond = new StringBuilder(o.getKey().toString()).reverse().toString();
+		String keySecond = new StringBuilder(o.getDna().toString()).reverse().toString();
 		
-		result =  this.key.toString().compareTo(keySecond);		
+		result =  this.dna.toString().compareTo(keySecond);		
 		if(result == 0) {
 			return result;
 		}
 		return mainResult;
 	}
 
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((key == null) ? 0 : key.hashCode());
+		result = prime * result + ((dna == null) ? 0 : dna.hashCode());
 		return result;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
@@ -77,14 +79,12 @@ public class DNAMirrorKey implements WritableComparable<DNAMirrorKey> {
 		if (getClass() != obj.getClass())
 			return false;
 		DNAMirrorKey other = (DNAMirrorKey) obj;
-		if (key == null) {
-			if (other.key != null)
+		if (dna == null) {
+			if (other.dna != null)
 				return false;
-		} else if (!key.equals(other.key))
+		} else if (!dna.equals(other.dna))
 			return false;
 		return true;
 	}
-	
-	
 
 }
