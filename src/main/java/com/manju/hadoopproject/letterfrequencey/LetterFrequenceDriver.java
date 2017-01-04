@@ -1,6 +1,7 @@
 package com.manju.hadoopproject.letterfrequencey;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
@@ -28,6 +29,11 @@ public class LetterFrequenceDriver {
         job.setReducerClass(LetterFrequencyReducer.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(IntWritable.class);
+        FileSystem fs = FileSystem.get(conf);
+        boolean isOutputDirExists = fs.exists(new Path(args[1]));
+        if(isOutputDirExists){ 
+        	fs.delete(new Path(args[1]), true);
+        }
         FileInputFormat.addInputPath(job, new Path(args[0]));
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
         System.exit(job.waitForCompletion(true) ? 0 : 1);
