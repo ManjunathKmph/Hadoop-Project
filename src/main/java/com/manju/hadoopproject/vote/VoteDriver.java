@@ -3,6 +3,7 @@ package com.manju.hadoopproject.vote;
 import java.net.URI;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
@@ -18,7 +19,7 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
  *	As example, if A with a worth of 5 and B with a worth of 1 are voting for C, the vote count of C would be 6.
  *	You are given a list of people with their value of vote.You are also given another list describing who voted for who all.
  * Input Values:
- *     List1               List2
+ *                List1              List2
  *		Voter Votee        Person Worth   
  *		A      C            A      5  
  *		B      C            B      1
@@ -28,7 +29,7 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
  *        A           0
  *        B           0
  *        C           6
- *        F			  11
+ *        F           11
  * </p>
  */
 public class VoteDriver {
@@ -41,6 +42,11 @@ public class VoteDriver {
         job.setReducerClass(VoteReducer.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(IntWritable.class);
+        FileSystem fs = FileSystem.get(conf);
+        boolean isOutputDirExists = fs.exists(new Path(args[1]));
+        if(isOutputDirExists){ 
+        	fs.delete(new Path(args[1]), true);
+        }
         FileInputFormat.addInputPath(job, new Path(args[0]));
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
         job.addCacheFile(new URI(args[2]));
